@@ -1,4 +1,4 @@
-package com.example.myactivity;
+package com.example.myactivity.models;
 
 public class TicTacToeModel {
     private String[][] board;
