@@ -19,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -47,12 +48,21 @@ public class MenuActivity extends AppCompatActivity {
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_main) {
+            if (item.getItemId() == R.id.nav_home) {
+                showFragment(new HomeFragment());
+            } else if (item.getItemId() == R.id.nav_local_game) {
                 startActivity(new Intent(this, MainActivity.class));
+            } else if (item.getItemId() == R.id.nav_profile) {
+                showFragment(new ProfileFragment());
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
+
+        if (savedInstanceState == null) {
+            showFragment(new HomeFragment());
+            navigationView.setCheckedItem(R.id.nav_home);
+        }
     }
 
     @Override
@@ -61,5 +71,12 @@ public class MenuActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showFragment(Fragment fragment) {
+    getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_container, fragment)
+                    .commit();
     }
 }
