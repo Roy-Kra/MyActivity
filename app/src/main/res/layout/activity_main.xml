@@ -85,4 +85,12 @@
 
     </GridLayout>
 
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:text="@string/reset_board"
+        android:onClick="resetBoard"
+        android:textSize="24sp" />
+
 </LinearLayout>
