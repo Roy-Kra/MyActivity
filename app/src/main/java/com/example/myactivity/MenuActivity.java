@@ -20,6 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.Fragment;
+import com.example.myactivity.Main2Activity;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -52,7 +53,9 @@ public class MenuActivity extends AppCompatActivity {
                 showFragment(new HomeFragment());
             } else if (item.getItemId() == R.id.nav_local_game) {
                 startActivity(new Intent(this, MainActivity.class));
-            } else if (item.getItemId() == R.id.nav_profile) {
+            } else if (item.getItemId() == R.id.nav_rtdb_prep) {
+                startActivity(new Intent(this, Main2Activity.class));
+            }else if (item.getItemId() == R.id.file) {
                 showFragment(new ProfileFragment());
             }
             drawerLayout.closeDrawer(GravityCompat.START);
