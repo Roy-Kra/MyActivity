@@ -20,11 +20,11 @@ import com.example.myactivity.MenuActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-            private static final long LOGIN_SHELL_DELAY_MS = 4000;
+    private static final long LOGIN_SHELL_DELAY_MS = 4000;
     private static final String PREFS_NAME = "PREFS_NAME";
     private static final String KEY_STAY_CONNECT = "stayConnect";
 
-            private SharedPreferences settings;
+    private SharedPreferences settings;
     private CheckBox cBstayconnect;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -38,35 +38,38 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        
-                        settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-                cBstayconnect = findViewById(R.id.cBstayconnect);
-        
-                        // SharedPreferences demo: restore and save the "remember me" checkbox.
-                                cBstayconnect.setChecked(settings.getBoolean(KEY_STAY_CONNECT, false));
-                cBstayconnect.setOnCheckedChangeListener((buttonView, isChecked) ->
-                                settings.edit().putBoolean(KEY_STAY_CONNECT, isChecked).apply()
-                                );
-        
-                        // Temporary bridge: skip login until Firebase auth lesson is implemented.
-                                handler.postDelayed(() -> {
-                                        settings.edit().putBoolean(KEY_STAY_CONNECT, cBstayconnect.isChecked()).apply();
-                                        startActivity(new Intent(LoginActivity.this, MenuActivity.class));
-                                        finish();
-                                    }, LOGIN_SHELL_DELAY_MS);
+
+        settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        cBstayconnect = findViewById(R.id.cBstayconnect);
+
+        // SharedPreferences demo: restore and save the "remember me" checkbox.
+        cBstayconnect.setChecked(settings.getBoolean(KEY_STAY_CONNECT, false));
+        cBstayconnect.setOnCheckedChangeListener((buttonView, isChecked) ->
+            settings.edit().putBoolean(KEY_STAY_CONNECT, isChecked).apply()
+        );
+
+        // Temporary bridge: skip login until Firebase auth lesson is implemented.
+        handler.postDelayed(
+            () -> {
+                settings.edit().putBoolean(KEY_STAY_CONNECT, cBstayconnect.isChecked()).apply();
+                startActivity(new Intent(LoginActivity.this, MenuActivity.class));
+                finish();
+            },
+            LOGIN_SHELL_DELAY_MS
+        );
     }
 
-            public void onLoginClick(View view) {
-                Toast.makeText(this, "Email/password auth is added in a later lesson", Toast.LENGTH_SHORT).show();
-            }
+    public void onLoginClick(View view) {
+        Toast.makeText(this, "Email/password auth is added in a later lesson", Toast.LENGTH_SHORT).show();
+    }
 
-            public void onGoogleLoginClick(View view) {
-                Toast.makeText(this, "Google sign-in is an advanced later phase", Toast.LENGTH_SHORT).show();
-            }
+    public void onGoogleLoginClick(View view) {
+        Toast.makeText(this, "Google sign-in is an advanced later phase", Toast.LENGTH_SHORT).show();
+    }
 
-            @Override
+    @Override
     protected void onDestroy() {
-                super.onDestroy();
-                handler.removeCallbacksAndMessages(null);
-            }
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+    }
 }
