@@ -8,4 +8,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="reset_board">reset board</string>
     <string name="menu_rtdb_prep">firebase test</string>
+    <string name="login">Login</string>
+    <string name="user_name_e_mail">User name / e-mail</string>
+    <string name="password">Password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="login_with_google">Login with Google</string>
 </resources>
