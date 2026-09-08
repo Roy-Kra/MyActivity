@@ -7,6 +7,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.myactivity.models.TicTacToeModel;
+import android.util.Log;
+import android.widget.EditText;
+import com.example.myactivity.services.SignalRService;
 
 public class MainActivity extends AppCompatActivity {
     private TicTacToeModel model;
@@ -25,23 +28,26 @@ public class MainActivity extends AppCompatActivity {
         int row = Integer.parseInt(position[0]);
         int col = Integer.parseInt(position[1]);
 
-                if (model.isLegal(row, col)) {
-                model.makeMove(row, col);
-                button.setText(model.getCurrentPlayer());
+        if (model.isLegal(row, col)) {
+            model.makeMove(row, col);
+            String player = model.getCurrentPlayer();
 
-                        if (model.checkWin()) {
-                        model.changePlayer();
-                        Toast.makeText(this, "Player " + model.getCurrentPlayer() + " wins!", Toast.LENGTH_SHORT).show();
-                        model.resetGame();
-                        resetBoard();
-                    } else if (model.isTie()) {
-                        Toast.makeText(this, "It's a tie!", Toast.LENGTH_SHORT).show();
-                        model.resetGame();
-                        resetBoard();
-                    } else {
-                        model.changePlayer();
-                    }
+            button.setText(player);
+            signalRService.sendMove(row, col, player);
+
+            if (model.checkWin()) {
+                model.changePlayer();
+                Toast.makeText(this, "Player " + model.getCurrentPlayer() + " wins!", Toast.LENGTH_SHORT).show();
+                model.resetGame();
+                resetBoard();
+            } else if (model.isTie()) {
+                Toast.makeText(this, "It's a tie!", Toast.LENGTH_SHORT).show();
+                model.resetGame();
+                resetBoard();
+            } else {
+                model.changePlayer();
             }
+        }
     }
 
     private void resetBoard() {
@@ -55,5 +61,91 @@ public class MainActivity extends AppCompatActivity {
             Button button = findViewById(id);
             button.setText("");
         }
+    }
+
+    // הוספת בתוך המחלקה
+    private final SignalRService signalRService = new SignalRService();
+    private static final String TAG = "MainActivity";
+
+
+    // התחברות והפעלת מאזינים לשרת
+    public void onConnectClick(View view) {
+        EditText ipEdit = findViewById(R.id.editServerIP);
+        String ip = ipEdit.getText().toString().trim();
+        if (ip.isEmpty()) {
+            // Fall back to hint if empty
+            ip = ipEdit.getHint() != null ? ipEdit.getHint().toString() : "109.226.44.197";
+        }
+
+        String finalIp = ip;
+        Toast.makeText(this, "Connecting to " + finalIp + ":81", Toast.LENGTH_SHORT).show();
+        signalRService.connect(finalIp, new SignalRService.Listener() {
+            @Override
+            public void onConnected() {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Connected to hub", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onDisconnected(Throwable error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Hub error: " + (error != null ? error.getMessage() : "unknown"), Toast.LENGTH_LONG).show());
+            }
+
+            @Override
+            public void onReceiveMessage(String user, String message) {
+                Log.d(TAG, "we got " + message + " from " + user);
+            }
+
+            @Override
+            public void onReceiveKey(String key) {
+                // בהמשך נטפל כאן בקבלת מידע מהשרת
+                Log.d(TAG, "HandleOthersKey: " + key);
+                // Expecting format: "row,col,player"
+                String[] parts = key.split(",");
+                if (parts.length != 3) {
+                    return;
+                }
+                try {
+                    int r = Integer.parseInt(parts[0].trim());
+                    int c = Integer.parseInt(parts[1].trim());
+                    String p = parts[2].trim();
+
+                    runOnUiThread(() -> {
+                        // Only apply if the cell is still empty
+                        if (model.isLegal(r, c)) {
+                            boolean applied = model.setMove(r, c, p);
+                            if (applied) {
+                                int id = idFor(r, c);
+                                if (id != 0) {
+                                    Button target = findViewById(id);
+                                    if (target != null) {
+                                        target.setText(p);
+                                    }
+                                    // Optional: win/tie checks would go here if implemented
+
+                                    // Keep turn alternation consistent with local logic
+                                }
+                                model.changePlayer();
+                            }
+                        }
+                    });
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "Bad key format: " + key);
+                }
+            }
+        });
+    }
+
+
+    private int idFor(int row, int col) {
+        if (row == 0 && col == 0) return R.id.button00;
+        if (row == 0 && col == 1) return R.id.button01;
+        if (row == 0 && col == 2) return R.id.button02;
+        if (row == 1 && col == 0) return R.id.button10;
+        if (row == 1 && col == 1) return R.id.button11;
+        if (row == 1 && col == 2) return R.id.button12;
+        if (row == 2 && col == 0) return R.id.button20;
+        if (row == 2 && col == 1) return R.id.button21;
+        if (row == 2 && col == 2) return R.id.button22;
+        return 0;
     }
 }
