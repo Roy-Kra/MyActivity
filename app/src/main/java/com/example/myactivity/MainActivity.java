@@ -55,11 +55,5 @@ public class MainActivity extends AppCompatActivity {
             Button button = findViewById(id);
             button.setText("");
         }
-        model.resetGame();
-    }
-
-
-    public void resetBoard(View view) {
-        resetBoard();
     }
 }
