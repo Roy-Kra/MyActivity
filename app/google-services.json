@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "338111257406",
+    "firebase_url": "https://presence-e4a82-default-rtdb.firebaseio.com",
+    "project_id": "presence-e4a82",
+    "storage_bucket": "presence-e4a82.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:338111257406:android:702f6fc0370dd9927a6a6f",
+        "android_client_info": {
+          "package_name": "com.example.myactivity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp1prJGM_kfCxe-auTaUUUCfTA4_oXClA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
